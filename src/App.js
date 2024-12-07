@@ -36,6 +36,8 @@ import PopupHuongDan from "./components/PopupHuongDan";
 import PopupBuyTurn from "./components/PopupBuyTurn";
 import { useTranslation } from "react-i18next";
 import "./util/i18n";
+import { useNavigate } from "react-router-dom";
+import PopupLeaderBoard from "./components/PopupLeaderBoard";
 
 export const prizes = [
   {
@@ -86,7 +88,6 @@ export const prizes = [
     label: "5555 Stars",
   },
 ];
-
 const convertStringToArray = (str) => {
   let converPath = str
     .split(/[&]+/)
@@ -99,6 +100,7 @@ const convertStringToArray = (str) => {
 };
 
 const App = () => {
+  
   const paramsArray = window.location.search
     ? convertStringToArray(
       window.location.search.slice(1, window.location.search.length)
@@ -116,6 +118,7 @@ const App = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showHuongDan, setShowHuongDan] = useState(false);
   const [countPlayTurn, setCountPlayTurn] = useState(0);
+  const [showLeaderBoard, setShowLeaderBoard] = useState(false);
 
   const [buyMore, setBuyMore] = useState(false);
   const [messageError, setMessageError] = useState("");
@@ -124,7 +127,21 @@ const App = () => {
 
   const audioRef = useRef(null);
   const audioDoneRef = useRef(null);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
+  const [language, setLanguage] = useState(i18n.language || "VI");
+  const toggleLanguage = () => {
+    const newLanguage = language === "VI" ? "EN" : "VI";
+    i18n.changeLanguage(newLanguage);
+    setLanguage(newLanguage);
+  };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!tokenLocal) {
+      window.location.href = "/login";
+    }
+  }, [navigate]);
   useEffect(() => {
     if(tokenLocal) {
       setTokenState(tokenLocal);
@@ -150,7 +167,7 @@ const App = () => {
   
   useEffect(() => {
     fetchData();
-  });
+  },[]);
 
   // Lấy số lượt chơi đang có
   const wsGetLuckyPlayTurn = async () => {
@@ -216,11 +233,14 @@ const App = () => {
 
   const onLogout = (v) => {
     localStorage.setItem("token", "");
+    localStorage.setItem("username","")
+    localStorage.setItem("totalAmount","")
     window.location.reload();
   };
 
   // Edit
   return (
+    <>
     <div
       style={{
         backgroundColor: "#333",
@@ -250,6 +270,23 @@ const App = () => {
         }}
         src={!isMute ? IconLoa : IconLoaTat}
       />
+        <button
+        onClick={toggleLanguage}
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          backgroundColor: "#fff",
+          border: "1px solid #ccc",
+          borderRadius: "5px",
+          padding: "5px 10px",
+          cursor: "pointer",
+          color:"black"
+        }}
+      >
+        {language === "VI" ? "Switch to English" : "Chuyển sang Tiếng Việt"}
+      </button>
+
       <div
         style={{
           display: "flex",
@@ -359,6 +396,11 @@ const App = () => {
               text={t("History")}
             />
             <ItemOption
+              icon={IconSach}
+              onClick={(v) => setShowLeaderBoard(true)}
+              text={t("Leader Board")}
+            />
+            <ItemOption
               onClick={
                 () => setBuyMore(true)
               }
@@ -386,22 +428,31 @@ const App = () => {
         />
       ) : null}
       {buyMore ? (
-        <PopupBuyTurn
-          onClose={() => setBuyMore(false)}
-          onSuccess={(e) => {
-            setBuyMore(false);
-            if (e.status == "0") {
-              setMessageError("Bạn đã mua thêm lượt thành công.");
-            } else {
-              setMessageError(e.message)
-            }
-          }}
-        />
-      ) : null}
+          <PopupBuyTurn
+            onClose={() => setBuyMore(false)}
+            onSuccess={(response) => {
+              setBuyMore(false);
+              if (response.status === "error") {
+                alert(t("The amount is insufficient, please submit additional funds."));
+              } else if (response.status === 201) {
+                setMessageError("Bạn đã mua thêm lượt thành công.");
+                alert(t("Additional attempts purchased successfully."));
+              } else {
+                alert("The amount is insufficient, please submit additional funds.");
+                window.location.href = "/home";
+              }
+            }}
+          />
+        ) : null}
 
       {showHistory ? (
         <PopupHistory
           onClose={() => setShowHistory(false)}
+        />
+      ) : null}
+      {showLeaderBoard ? (
+        <PopupLeaderBoard
+          onClose={() => setShowLeaderBoard(false)}
         />
       ) : null}
       {showHuongDan ? (
@@ -410,7 +461,26 @@ const App = () => {
         />
       ) : null}
     </div>
+
+
+    <div>
+    <div
+      style={{
+        backgroundColor: "#333",
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      
+    </div>
+    </div>
+    </>
   );
+  
 };
 
 const ItemOption = ({ icon, text, onClick, type }) => (
@@ -428,6 +498,9 @@ const ItemOption = ({ icon, text, onClick, type }) => (
     <img style={{}} src={icon} />
     {text ? text : ""}
   </div>
+  
 );
 
 export default App;
+
+

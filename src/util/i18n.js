@@ -48,7 +48,15 @@ i18n.use(initReactI18next).init({
         Logout: "Logout",
         Spins: "Spins",
         "Matching correctly": "Matching correctly",
-        PopupRegisterTitle: "Bạn chắc chắn muốn đăng ký VIP ?"
+        PopupRegisterTitle: "Bạn chắc chắn muốn đăng ký VIP ?",
+        "Deposit money": "Deposit money",
+        "The amount is insufficient, please submit additional funds.": "The amount is insufficient, please submit additional funds.",
+        "Additional attempts purchased successfully.": "Additional attempts purchased successfully.",
+        "Leader Board": "Leader Board",
+        "Total Star": "Total Star",
+        "User Name": "User Name",
+        "Cancel": "Cancel",
+
       },
     },
     VI: {
@@ -96,7 +104,14 @@ i18n.use(initReactI18next).init({
         Spins: "Đăng xuất",
         "Matching correctly": "Kết hợp chính xác",
         Confirm: "Xác nhận",
-        PopupRegisterTitle: "Bạn chắc chắn muốn đăng ký VIP ?"
+        PopupRegisterTitle: "Bạn chắc chắn muốn đăng ký VIP ?",
+        "Deposit money": "Nộp tiền",
+        "The amount is insufficient, please submit additional funds.": "Số tiền không đủ, vui lòng nộp thêm.",
+        "Additional attempts purchased successfully.": "Mua thêm lượt thành công.",
+        "Leader Board": "Bảng xếp hạng",
+        "Total Star":"Tổng số sao",
+        "User Name": "Tên người chơi",
+        "Cancel": "Hủy"
       },
     }
 },

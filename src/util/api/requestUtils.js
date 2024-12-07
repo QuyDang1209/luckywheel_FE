@@ -9,6 +9,7 @@ axios.interceptors.response.use(
 
 export function callApi(url, method, data = {}) {
   const token = localStorage.getItem("token") || "";
+  console.log("Token:", token);
   return axios({
     method,
     url: url || `${mainUrl}`,
@@ -18,8 +19,13 @@ export function callApi(url, method, data = {}) {
     } : {}
   }).catch((e) => {
     console.log("error", e);
+  if (e.response && (e.response.status === 401 || e.response.status === 403)) {
     localStorage.setItem("token", "");
-    if(token)
-      return (window.location.reload());
+    alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+    if (token) {
+      return window.location.reload();
+    }
+  }
+  return Promise.reject(e);
   });
 }
