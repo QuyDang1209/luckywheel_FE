@@ -56,7 +56,9 @@ i18n.use(initReactI18next).init({
         "Total Star": "Total Star",
         "User Name": "User Name",
         "Cancel": "Cancel",
-
+        "Payment via Paypal": "Payment via Paypal",
+        "Your money":"Your money",
+        "money": "money"
       },
     },
     VI: {
@@ -111,7 +113,11 @@ i18n.use(initReactI18next).init({
         "Leader Board": "Bảng xếp hạng",
         "Total Star":"Tổng số sao",
         "User Name": "Tên người chơi",
-        "Cancel": "Hủy"
+        "Cancel": "Hủy",
+        "Payment via Paypal": "Thanh toán bằng Paypal",
+        "Payment success": "Thanh toán thành công!",
+        "Your money": "Số tiền còn lại của bạn",
+        "money": "số tiền"
       },
     }
 },

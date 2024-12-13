@@ -76,31 +76,14 @@ const PopupBuyTurn = ({ onClose, onSuccess }) => {
     const username = localStorage.getItem("username")
     if (paymentId && payerId) {
      
-      axios.get("http://localhost:8085/api/payments/success", {
+      axios.get(`http://localhost:8085/api/payments/success/${totalAmount}`, {
         params: { paymentId, payerId },
+        headers: token ? {
+          Authorization:  `Bearer ${token}`,
+        } :{}
       })
         .then(async (response) => {
-          alert("Thanh toán thành công!");
-          console.log(totalAmount,token,"aaaaaaaaaaaaa11111111111aaaaaaaaaaa");
-          
-          try {
-            
-            const depositResponse = await axios.post(`http://localhost:8085/api/user/deposit_money/${totalAmount}`,
-              null,
-              {params: { username: username }}
-                            
-          );
-  
-            if (depositResponse) {
-              alert("Nạp tiền thành công!");
-              window.location.href = "/home"; // Chuyển hướng hoặc làm gì đó sau khi nạp tiền thành công
-            } else {
-              alert("Lỗi nạp tiền. Vui lòng thử lại.");
-            }
-          } catch (error) {
-            console.error("Lỗi khi nạp tiền:", error.response || error.message);
-            alert("Lỗi khi nạp tiền.");
-          }
+          alert("Payment success");
           window.location.href = "/home";
         })
         .catch((error) => {
@@ -108,6 +91,23 @@ const PopupBuyTurn = ({ onClose, onSuccess }) => {
         });
     }
   }, [location.search]); 
+
+  useEffect(() => {
+    // Kiểm tra nếu giao dịch bị hủy
+    if (location.search.includes("payment_cancel")) {
+      axios
+        .get("http://localhost:8085/api/payments/cancel")
+        .then((response) => {
+          alert("Thanh toán bị hủy.");
+          console.log("Cancel response:", response.data);
+          // Có thể xử lý thêm nếu cần, ví dụ: chuyển về trang khác
+          window.location.href = "/home";
+        })
+        .catch((error) => {
+          console.error("Lỗi khi gọi API hủy thanh toán:", error.response || error.message);
+        });
+    }
+  }, [location.search]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -185,7 +185,7 @@ const PopupBuyTurn = ({ onClose, onSuccess }) => {
                 {t("5000 VND/5 turns/day")}
               </div>
               <div style={{ fontSize: 12, marginTop: 6 }}>
-                {t(`Số tiền còn lại của bạn: ${money}VNĐ`)}
+                {t(`Your money: ${money}VNĐ`)}
               </div>
               <button
                 style={{ marginTop: 8 }}
@@ -227,14 +227,14 @@ const PopupBuyTurn = ({ onClose, onSuccess }) => {
                 onClick={handleTopUpSubmit}
                 className="button-cacel"
               >
-                {t("Thanh toán bằng Paypal")}
+                {t("Payment via Paypal")}
               </button>
               <button
                 style={{ marginTop: 8 }}
                 onClick={() => setShowTopUpForm(false)}
                 className="button-cancel"
               >
-                {t("Hủy")}
+                {t("Cancel")}
               </button>
             </div>
           )}

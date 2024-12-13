@@ -21,7 +21,7 @@ export function callApi(url, method, data = {}) {
     console.log("error", e);
   if (e.response && (e.response.status === 401 || e.response.status === 403)) {
     localStorage.setItem("token", "");
-    alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+    alert("Login failed. Please try again.");
     if (token) {
       return window.location.reload();
     }
